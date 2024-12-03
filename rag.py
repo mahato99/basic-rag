@@ -3,6 +3,8 @@ import warnings
 from typing import List
 from dotenv import load_dotenv
 load_dotenv()
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 warnings.filterwarnings('ignore')
 
@@ -35,7 +37,7 @@ def load_pdf(file_path: str) -> List[Document]:
         print(f"Error loading PDF: {e}")
         return []
 
-def split_documents(documents: List[Document], chunk_size: int = 1000, chunk_overlap: int = 200) -> List[Document]:
+def split_documents(documents: List[Document], chunk_size: int = 500, chunk_overlap: int =100) -> List[Document]:
     """
     Split documents into smaller chunks.
     
@@ -107,7 +109,7 @@ def main():
     # Load PDF
     documents = load_pdf(pdf_path)
     if not documents:
-        return
+        return "No Document was found."
     
     # Split documents
     split_docs = split_documents(documents)
@@ -115,7 +117,7 @@ def main():
     # Create vector store
     vector_store = create_vector_store(split_docs)
     if not vector_store:
-        return
+        return "No vector store"
     
     # Create QA chain
     qa_chain = create_qa_chain(vector_store)
@@ -123,11 +125,11 @@ def main():
         return
     
     # Example query
-    query = "What is the annual revenue of the company?"
+    query = "Who are the auditors for the financial year of Reliance?"
     
     try:
         # Run query
-        response = qa_chain({"query": query,"TOKENIZERS_PARALLELISM":False})
+        response = qa_chain.invoke({"query": query})
         
         # Print response and source documents
         print("Answer:", response['result'])
