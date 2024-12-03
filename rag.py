@@ -2,12 +2,6 @@ import os
 import warnings
 from typing import List
 from dotenv import load_dotenv
-load_dotenv()
-import os
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-
-warnings.filterwarnings('ignore')
-
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
@@ -16,16 +10,12 @@ from langchain_openai import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.retrieval_qa.base import RetrievalQA
 
+load_dotenv()
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+warnings.filterwarnings('ignore')
+
 def load_pdf(file_path: str) -> List[Document]:
-    """
-    Load a PDF file and return its documents.
-    
-    Args:
-        file_path (str): Path to the PDF file
-    
-    Returns:
-        List[Document]: List of extracted documents
-    """
     try:
         loader = PyPDFLoader(file_path)
         documents = loader.load()
